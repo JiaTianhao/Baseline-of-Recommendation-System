@@ -74,3 +74,6 @@ class Dataset(object):
                 negatives=None
         return  negatives
     #negatives，dict,{user:[未交互物品集]}
+    def reset(self,num):
+        self.threshold=num
+        self.__init__(self.path,self.splitter,self.separator,self.threshold, self.evaluate_neg,self.dataset_name,splitterRatio=[0.8,0.2])

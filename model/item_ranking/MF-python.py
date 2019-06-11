@@ -8,7 +8,7 @@ class MF_python(object):
     def __init__(self,dataset):
 
         config=configparser.ConfigParser()
-        config.read("conf/MF_python.properties")
+        config.read("conf/MF.properties")
         self.config=dict(config.items("hyperparameters"))
         self.embedding_size=int(self.config["embedding_size"])
         self.isexplicit=str(self.config["isexplicit"])
@@ -30,9 +30,9 @@ class MF_python(object):
         self.iter_rmse=[]
         self.iter_mae=[]
 
-    def data_type(self,dataset):
-        if self.isexplicit=='True':
-            dataset=dataset(threshold=0)#Dataset(参数)
+    def data_type(self,dataset):#加载显性数据
+        if self.isexplicit=='true':
+           dataset=dataset.reset(0)#Dataset(参数)
         return dataset
 
     def init_model(self):
@@ -47,7 +47,7 @@ class MF_python(object):
         p_delta,q_delta=dict(),dict()
         while iteration<self.maxIter:
             self.loss=0
-            if self.isexplicit == True:
+            if self.isexplicit =='true':
                 for u,i in self.dataset.trainMatrix.keys:
                     rating=self.dataset.trainMatrix.get((u,i))
                     pred=self.predict(u,i)
@@ -107,7 +107,7 @@ class MF_python(object):
         rmse, mae = self.predict_model_explicit()
 
         # early stopping
-        if self.isEarlyStopping == True:
+        if self.isEarlyStopping =='true':
             cond = self.lastRmse < rmse
             if cond:
                 print('test rmse increase, so early stopping')
