@@ -4,11 +4,11 @@ from evaluation.explicitdata.Metric import Rmse,Mae
 import configparser
 from data.Dataset import Dataset
 #未做交叉验证
-class MF_python(object):
+class MF_explicit(object):
     def __init__(self,dataset):
 
         config=configparser.ConfigParser()
-        config.read("conf/MF.properties")
+        config.read("conf/MF_explicit.properties")
         self.config=dict(config.items("hyperparameters"))
         self.embedding_size=int(self.config["embedding_size"])
         self.isexplicit=str(self.config["isexplicit"])
@@ -48,7 +48,7 @@ class MF_python(object):
         while iteration<self.maxIter:
             self.loss=0
             if self.isexplicit =='true':
-                for u,i in self.dataset.trainMatrix.keys:
+                for u,i in self.dataset.trainMatrix.keys():
                     rating=self.dataset.trainMatrix.get((u,i))
                     pred=self.predict(u,i)
                     error=rating-pred
@@ -73,11 +73,10 @@ class MF_python(object):
                 pass
     def predict_model_explicit(self):
         res=[]
-        for u,i in self.dataset.testMatrix.keys:
+        for u,i in self.dataset.testMatrix.keys():
             rating=self.dataset.testMatrix.get((u,i))
             prediction=self.predict(u,i)
 
-            prediction=self.denormalize(prediction,self.min_val,self.max_val)
             pred=self.checkRatingBoundary(prediction)
             res.append([u,i,rating,pred])
 
@@ -86,14 +85,18 @@ class MF_python(object):
         self.iter_rmse.append(rmse)  # for plot
         self.iter_mae.append(mae)
         return rmse,mae
+    def predict_model(self):
+        rmse,mae=self.iter_rmse[-1],self.iter_mae[-1]
+        print("Rmse:%s,Mae:%s"%rmse,mae)
+    def build_graph(self):
+        self.init_model()
+
     def predict_model_impicit(self):
         pass
 
     def predict(self,user,item):
         return self.p(user).dot(self.q(item))
 
-    def denormalize(self,prediction,min,max):
-        return min+prediction*(max-min)
     def checkRatingBoundary(self, prediction):
         prediction =round( min( max( prediction , self.min_val ) , self.max_val ) ,3)
         return prediction
@@ -130,11 +133,11 @@ class MF_python(object):
     def updateLearningRate(self, iter):
         if iter > 1:
             if abs(self.lastLoss) > abs(self.loss):
-                self.config.lr *= 1.05
+                self.learning_rate *= 1.05
             else:
-                self.config.lr *= 0.5
-        if self.config.lr > 1:
-            self.config.lr = 1
+                self.learning_rate *= 0.5
+        if self.learning_rate > 1:
+            self.learning_rate = 1
 
     def show_rmse(self):
         '''

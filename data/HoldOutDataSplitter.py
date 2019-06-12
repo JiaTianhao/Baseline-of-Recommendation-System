@@ -79,10 +79,10 @@ class HoldOutDataSplitter(object):
         return train_matrix,train_dict,test_matrix,userseq,userids,itemids,time_matrix
     '''
     train_matrix ,dockmatrix 用来存储row:user,col:打分item和data:分数,{(u,i)：r}
-    train_dict,dict,key=u,value=[ratio交互物品集]，{u:[i,r,t]}
+    train_dict,dict,key=u,value=[ratio交互物品集]，{u:[i,i,i]}
     test_matrix同上，最近ratio交互记录，{（u，i）:r}
     time matrix，同上，data是time，全部数据
-    userseq，dict，key=u序号,value=[(交互物品，1，time)...]
+    userseq，dict，key=u序号,value=[(交互物品，1/r，time)...]
     userids，dict，key=userid,value=user
     itemIDS，dict, key=itemid,value=item
     '''

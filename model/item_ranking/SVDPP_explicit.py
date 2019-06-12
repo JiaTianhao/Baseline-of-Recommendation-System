@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from evaluation.explicitdata.Metric import Rmse,Mae
 import configparser
-class SVDPP(object):
+class SVDPP_explicit(object):
     def __init__(self,dataset):
         config = configparser.ConfigParser()
         config.read("conf/SVDPP.properties")
@@ -15,7 +15,6 @@ class SVDPP(object):
         self.lambdaQ = float(self.config["lambdaQ"])
         self.lambdaY = float(self.config["lambdaY"])
         self.lambdaB = float(self.config["lambdaB"])
-        self.gamma = float(self.config["gamma"])
         self.isEarlyStopping = str(self.config["isEarlyStopping"])
         self.maxIter = int(self.config["maxIter"])
         self.min_val = int(self.config["min_val"])
@@ -42,7 +41,7 @@ class SVDPP(object):
         self.lastRmse,self.lastMae=10.0,10.0
         self.Bu = np.random.rand(self.num_users) / (self.embedding_size**0.5)  # bias value of user
         self.Bi = np.random.rand(self.num_items) / (self.embedding_size**0.5)  # bias value of item
-        self.Y = np.random.rand(self.num_items, self.embedding_size**0.5) / (
+        self.Y = np.random.rand(self.num_items, self.embedding_size) / (
                 self.embedding_size ** 0.5)  # implicit preference
         self.SY = dict()
 
@@ -51,7 +50,7 @@ class SVDPP(object):
         while iteration<self.maxIter:
             self.loss=0
             if self.isexplicit =='true':
-                for u,i in self.dataset.trainMatrix.keys:
+                for u,i in self.dataset.trainMatrix.keys():
                     rating=self.dataset.trainMatrix.get((u,i))
                     pred=self.predict(u,i)
                     error=rating-pred
@@ -104,7 +103,7 @@ class SVDPP(object):
 
     def predict_model_explicit(self):
         res=[]
-        for u,i in self.dataset.testMatrix.keys:
+        for u,i in self.dataset.testMatrix.keys():
             rating=self.dataset.testMatrix.get((u,i))
             prediction=self.predict(u,i)
 

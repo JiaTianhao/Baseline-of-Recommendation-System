@@ -2,6 +2,7 @@ import numpy as np
 import tensorflow as tf
 from data.Dataset import Dataset
 from model.item_ranking.MF import MF
+from model.item_ranking.MF_explicit import MF_explicit
 from model.seq_ranking.FPMC import FPMC
 from model.seq_ranking.FPMCplus import FPMCplus
 from model.seq_ranking.TransRec import TransRec
@@ -24,6 +25,7 @@ from model.item_ranking.MultiVAE import MultiVAE
 from model.item_ranking.JCA import JCA
 from model.item_ranking.CFGAN import CFGAN
 from model.item_ranking.SBPR import SBPR
+
 np.random.seed(2018)
 tf.set_random_seed(2017)
 
@@ -46,7 +48,11 @@ if __name__ == "__main__":
     config.gpu_options.allow_growth = True
     with tf.Session(config=config) as sess:
         if recommender.lower() == "mf" : 
-            model = MF(sess,dataset)    
+            model = MF(sess,dataset)
+
+        elif recommender.lower()=='mf_python':
+            model = MF_explicit(dataset)
+            dataset=model.dataset
                        
         elif recommender.lower() == "fpmc":
             model = FPMC(sess,dataset) 

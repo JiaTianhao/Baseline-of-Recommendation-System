@@ -14,6 +14,12 @@ from util.Logger import logger
 def test_model(model,dataset,num_thread=10):
     eval_begin = time()
     model_name=str(model.__class__).split(sep=".")[-1].replace("\'>","")
+    if hasattr(model,'isexplicit'):
+        if model.isexplicit=='true':
+            model.predict_model()
+            model.show_loss()
+            model.show_rmse()
+            return
     if dataset.splitter == "loo":
         (hits, ndcgs,aucs) = evaluate_by_loo(model,dataset.testMatrix,dataset.testNegatives,num_thread)
         hr = np.array(hits).mean()
